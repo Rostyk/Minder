@@ -63,8 +63,6 @@
 {
     if([LocationShareModel sharedModel].isConnected)
        [self.locationTracker forceUpdateLocation];
-    
-    completionHandler(UIBackgroundFetchResultNewData);
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
