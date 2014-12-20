@@ -13,7 +13,7 @@
 #import "Utils.h"
 #import "DataCommunicator.h"
 #import "SecureUDID.h"
-
+#import "Config.h"
 #import "FTLocationManager.h"
 
 @implementation AppDelegate {
@@ -61,7 +61,10 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    [self.locationTracker updateLocationToServer];
+    if([LocationShareModel sharedModel].isConnected)
+       [self.locationTracker forceUpdateLocation];
+    
+    completionHandler(UIBackgroundFetchResultNewData);
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -131,25 +134,28 @@
         self.locationTracker = [[LocationTracker alloc]init];
         [self.locationTracker startLocationTracking];
         
-        //Send the best location to server every 60 seconds
-        //You may adjust the time interval depends on the need of your app.
-        NSTimeInterval time = 60.0;
+   
+        NSTimeInterval time = LOCATION_TRACKING_SERVICE_CALL_TO_PREVENT_SUSPENSION_FREQUENCY;
         self.locationUpdateTimer =
         [NSTimer scheduledTimerWithTimeInterval:time
                                          target:self
                                        selector:@selector(updateLocation)
                                        userInfo:nil
                                         repeats:YES];
+        
+        /*self.simulatePush =  [NSTimer scheduledTimerWithTimeInterval:30
+                                                              target:self
+                                                            selector:@selector(sim)
+                                                            userInfo:nil
+                                                             repeats:YES];*/
     }
 
 }
 
 -(void)updateLocation {
     NSLog(@"updateLocation");
-    
     [self.locationTracker updateLocationToServer];
 }
-
 
 
 -(void)locationDidFailToUpdateWithError:(NSError *)error {
@@ -157,7 +163,6 @@
 }
 - (void)applicationWillResignActive:(UIApplication *)application
 {
-
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }

@@ -7,7 +7,7 @@
 //
 
 #import "LocationTracker.h"
-
+#import "Config.h"
 #define LATITUDE @"latitude"
 #define LONGITUDE @"longitude"
 #define ACCURACY @"theAccuracy"
@@ -120,7 +120,7 @@
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
     
-    NSLog(@"locationManager didUpdateLocations");
+   // NSLog(@"locationManager didUpdateLocations");
     
     for(int i=0;i<locations.count;i++){
         CLLocation * newLocation = [locations objectAtIndex:i];
@@ -167,17 +167,21 @@
                                                            userInfo:nil
                                                             repeats:NO];
     
-    //Will only stop the locationManager after 10 seconds, so that we can get some accurate locations
-    //The location manager will only operate for 10 seconds to save battery
+    //Will only stop the locationManager after N seconds, so that we can get some accurate locations
+    //The location manager will only operate for N seconds to save battery
     if (self.shareModel.delay10Seconds) {
         [self.shareModel.delay10Seconds invalidate];
         self.shareModel.delay10Seconds = nil;
     }
     
-    self.shareModel.delay10Seconds = [NSTimer scheduledTimerWithTimeInterval:10 target:self
+    self.shareModel.delay10Seconds = [NSTimer scheduledTimerWithTimeInterval: OBTAIN_LOCATION_TIME target:self
                                                     selector:@selector(stopLocationDelayBy10Seconds)
                                                     userInfo:nil
                                                      repeats:NO];
+    if(self.updateLocationOnServer) {
+        [self updateLocationToServer];
+        self.updateLocationOnServer = NO;
+    }
 
 }
 
@@ -240,12 +244,14 @@
     
     //If the array is 0, get the last location
     //Sometimes due to network issue or unknown reason, you could not get the location during that  period, the best you can do is sending the last known location to the server
+    BOOL locationAvailable = YES;
     if(self.shareModel.myLocationArray.count==0)
     {
         NSLog(@"Unable to get location, use the last known location");
 
         self.myLocation=self.myLastLocation;
         self.myLocationAccuracy=self.myLastLocationAccuracy;
+        locationAvailable = NO;
         
     }else{
         CLLocationCoordinate2D theBestLocation;
@@ -255,15 +261,19 @@
         self.myLocationAccuracy =[[myBestLocation objectForKey:ACCURACY]floatValue];
     }
     
-    NSLog(@"Send to Server: Latitude(%f) Longitude(%f) Accuracy(%f)",self.myLocation.latitude, self.myLocation.longitude,self.myLocationAccuracy);
-    
-    NSString *deviceID = [[NSUserDefaults standardUserDefaults] objectForKey:@"deviceID"];
-    [self sendLocation:deviceID location: [[CLLocation alloc] initWithLatitude:self.myLastLocation.latitude longitude:self.myLastLocation.longitude]];
-    
-    //After sending the location to the server successful, remember to clear the current array with the following code. It is to make sure that you clear up old location in the array and add the new locations from locationManager
-    [self.shareModel.myLocationArray removeAllObjects];
-    self.shareModel.myLocationArray = nil;
-    self.shareModel.myLocationArray = [[NSMutableArray alloc]init];
+    if(locationAvailable) {
+        NSLog(@"Send to Server: Latitude(%f) Longitude(%f) Accuracy(%f)",self.myLocation.latitude, self.myLocation.longitude,self.myLocationAccuracy);
+        
+        NSString *deviceID = [[NSUserDefaults standardUserDefaults] objectForKey:@"deviceID"];
+        if(self.shareModel.isConnected)
+           [self sendLocation:deviceID location: [[CLLocation alloc] initWithLatitude:self.myLastLocation.latitude longitude:self.myLastLocation.longitude]];
+        
+        //After sending the location to the server successful, remember to clear the current array with the following code. It is to make sure that you clear up old location in the array and add the new locations from locationManager
+        [self.shareModel.myLocationArray removeAllObjects];
+        self.shareModel.myLocationArray = nil;
+        self.shareModel.myLocationArray = [[NSMutableArray alloc]init];
+
+    }
 }
 
 -(void)sendLocation:(NSString*) deviceID location: (CLLocation*) location{
@@ -290,6 +300,12 @@
     NSLog(@"response: %@ error: %@",[[NSString alloc] initWithData:respData encoding:NSUTF8StringEncoding],[error localizedDescription]);
     
     
+}
+
+-(void) forceUpdateLocation {
+    [self stopLocationTracking];
+    self.updateLocationOnServer = YES;
+    [self startLocationTracking];
 }
 
 

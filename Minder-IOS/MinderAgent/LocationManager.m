@@ -74,6 +74,7 @@ static LocationManager *locationManager;
     [clLocationManager startUpdatingLocation];
 }
 
+
 - (void) stopUptadingLocation{
     [clLocationManager stopUpdatingLocation];
     

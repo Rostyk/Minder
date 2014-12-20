@@ -9,7 +9,7 @@
 #import "ConnectedViewController.h"
 #import "FTLocationManager.h"
 #import "Utils.h"
-
+#import "LocationShareModel.h"
 #define iOSVersion7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7)?TRUE:FALSE
 #define iosVersion [[[UIDevice currentDevice] systemVersion] floatValue]
 #define topOffset (iOSVersion7) ? 64 : 0
@@ -86,6 +86,7 @@
 
             [self dismissViewControllerAnimated:YES completion:^{
                 NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
+                [LocationShareModel sharedModel].isConnected = NO;
                 [userDefs removeObjectForKey:@"connected"];
                 [userDefs synchronize];
             }];

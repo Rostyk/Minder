@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>8AAA083E-3983-4493-A365-8B88AD5297D5</string>
+	<key>IDESourceControlProjectName</key>
+	<string>MinderAgent</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>312316FB075A93C6D4A43D50A6F96796FB349B52</key>
+		<string>https://github.com/Rostyk/Minder.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Minder-IOS/MinderAgent.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>312316FB075A93C6D4A43D50A6F96796FB349B52</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Rostyk/Minder.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>312316FB075A93C6D4A43D50A6F96796FB349B52</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>312316FB075A93C6D4A43D50A6F96796FB349B52</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Minder</string>
+		</dict>
+	</array>
+</dict>
+</plist>

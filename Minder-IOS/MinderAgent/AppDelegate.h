@@ -14,5 +14,5 @@
 @property (strong, nonatomic) UIWindow *window;
 @property LocationTracker * locationTracker;
 @property (nonatomic) NSTimer* locationUpdateTimer;
-//- (void) didRecieveNotification;
+@property (nonatomic) NSTimer* simulatePush;
 @end

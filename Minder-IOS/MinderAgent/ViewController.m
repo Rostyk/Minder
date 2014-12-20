@@ -12,7 +12,7 @@
 #import "SVProgressHUD.h"
 #import "LocationManager.h"
 #import "SecureUDID.h"
-
+#import "LocationShareModel.h"
 #import <AudioToolbox/AudioToolbox.h>
 
 #define iOSVersion7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7)?TRUE:FALSE
@@ -100,6 +100,7 @@
     dispatch_once(&once, ^{
         defs = [NSUserDefaults standardUserDefaults];
         isConnected = [[defs objectForKey:@"connected"] boolValue];
+        [LocationShareModel sharedModel].isConnected = isConnected;
         if (isConnected) {
             [self presentViewController:connectedViewController animated:NO completion:nil];
         }
@@ -190,6 +191,7 @@
         NSString *messageString = [NSString stringWithFormat:@"%@",message];
         successAlert = [[UIAlertView alloc] initWithTitle:@"Sign Up Success" message:messageString delegate:self cancelButtonTitle:@"Not Now" otherButtonTitles:@"Connect", nil];
         [successAlert show];
+        [LocationShareModel sharedModel].isConnected = YES;
     }
 
 
@@ -225,6 +227,7 @@
                 [self sendDeviceToken:deviceToken deviceId:[deviceID intValue]];
             });
             [defs setObject:[NSNumber numberWithBool:isConnected] forKey:@"connected"];
+            [LocationShareModel sharedModel].isConnected = YES;
             [defs synchronize];
         }];
     }
