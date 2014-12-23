@@ -252,7 +252,8 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    [self.locationTracker updateLocationToServer: YES];
+    if([[[NSUserDefaults standardUserDefaults] objectForKey: @"connected"] boolValue])
+      [self.locationTracker updateLocationToServer: YES];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

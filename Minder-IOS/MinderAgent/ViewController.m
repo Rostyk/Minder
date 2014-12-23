@@ -214,7 +214,6 @@
         [SVProgressHUD showSuccessWithStatus:message];
         [self presentViewController:connectedViewController animated:YES completion:^{
             isConnected = TRUE;
-            
                 [defs setObject:deviceID forKey:@"deviceID"];
                 NSString *deviceToken = [defs objectForKey:@"deviceToken"];
                 [self sendDeviceToken:deviceToken deviceId:[deviceID intValue]];
