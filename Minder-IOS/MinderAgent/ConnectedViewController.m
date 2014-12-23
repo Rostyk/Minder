@@ -86,7 +86,6 @@
 
             [self dismissViewControllerAnimated:YES completion:^{
                 NSUserDefaults *userDefs = [NSUserDefaults standardUserDefaults];
-                [LocationShareModel sharedModel].isConnected = NO;
                 [userDefs removeObjectForKey:@"connected"];
                 [userDefs synchronize];
             }];

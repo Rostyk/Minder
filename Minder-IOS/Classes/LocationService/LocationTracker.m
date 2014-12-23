@@ -148,7 +148,7 @@
             [dict setObject:[NSNumber numberWithFloat:theAccuracy] forKey:@"theAccuracy"];
             
             [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithFloat:theLocation.latitude]  forKey: @"latitude"];
-            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithFloat:theLocation.longitude]  forKey: @"lobgitude"];
+            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithFloat:theLocation.longitude]  forKey: @"longitude"];
             [[NSUserDefaults standardUserDefaults] synchronize];
             //Add the vallid location with good accuracy into an array
             //Every 1 minute, I will select the best location based on accuracy and send to server

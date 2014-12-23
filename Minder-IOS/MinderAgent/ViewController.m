@@ -100,7 +100,6 @@
     dispatch_once(&once, ^{
         defs = [NSUserDefaults standardUserDefaults];
         isConnected = [[defs objectForKey:@"connected"] boolValue];
-        [LocationShareModel sharedModel].isConnected = isConnected;
         if (isConnected) {
             [self presentViewController:connectedViewController animated:NO completion:nil];
         }
@@ -191,7 +190,6 @@
         NSString *messageString = [NSString stringWithFormat:@"%@",message];
         successAlert = [[UIAlertView alloc] initWithTitle:@"Sign Up Success" message:messageString delegate:self cancelButtonTitle:@"Not Now" otherButtonTitles:@"Connect", nil];
         [successAlert show];
-        [LocationShareModel sharedModel].isConnected = YES;
     }
 
 
@@ -213,21 +211,14 @@
     }else if ([message hasPrefix:@"Please activate"]){
         [self failedWithAlert:message andTitle:@"Warning" andButtons:@[@"OK"]];
     }else if ([statusCode intValue] == 200){
-//        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:UIRemoteNotificationTypeNone];
-//        [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
         [SVProgressHUD showSuccessWithStatus:message];
-        //        [self.navigationController pushViewController:connectedViewController animated:YES];
-        static dispatch_once_t predicate;
         [self presentViewController:connectedViewController animated:YES completion:^{
             isConnected = TRUE;
             
-            dispatch_once(&predicate, ^{
                 [defs setObject:deviceID forKey:@"deviceID"];
                 NSString *deviceToken = [defs objectForKey:@"deviceToken"];
                 [self sendDeviceToken:deviceToken deviceId:[deviceID intValue]];
-            });
             [defs setObject:[NSNumber numberWithBool:isConnected] forKey:@"connected"];
-            [LocationShareModel sharedModel].isConnected = YES;
             [defs synchronize];
         }];
     }
