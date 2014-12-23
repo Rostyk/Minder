@@ -13,7 +13,7 @@
 #import "Utils.h"
 #import "DataCommunicator.h"
 #import "SecureUDID.h"
-#import "Config.h"
+#import "LocationShareModel.h"
 #import "FTLocationManager.h"
 
 @implementation AppDelegate {
@@ -54,19 +54,92 @@
     }
 }
 
+
+
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSLog(@"User ingo: %@",userInfo);
+    
+    __block UIBackgroundTaskIdentifier bg_task = background_task;
+    background_task = [application beginBackgroundTaskWithExpirationHandler:^ {
+        
+        //Clean up code. Tell the system that we are done.
+        [application endBackgroundTask: bg_task];
+        bg_task = UIBackgroundTaskInvalid;
+    }];
+    
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.fireDate = [[NSDate date] dateByAddingTimeInterval:1];
+    notification.alertBody = @"Push!!!";
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+    
+    [self.locationTracker updateLocationToServer: YES];
+    
+    [[UIApplication sharedApplication] endBackgroundTask: background_task];
+    background_task = UIBackgroundTaskInvalid;
+    
+    [self.locationTracker updateLocationToServer: YES];
+
     
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
-    if([LocationShareModel sharedModel].isConnected)
-       [self.locationTracker forceUpdateLocation];
+    
+    
+    if([[userDefs objectForKey:@"connected"] boolValue]) {
+        __block UIBackgroundTaskIdentifier bg_task = background_task;
+        background_task = [application beginBackgroundTaskWithExpirationHandler:^ {
+            
+            //Clean up code. Tell the system that we are done.
+            [application endBackgroundTask: bg_task];
+            bg_task = UIBackgroundTaskInvalid;
+        }];
+    
+        UILocalNotification *notification = [[UILocalNotification alloc] init];
+        notification.fireDate = [[NSDate date] dateByAddingTimeInterval:0.5];
+        notification.alertBody = @"1. Got remote push";
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+
+    
+        [self.locationTracker updateLocationToServer: YES];
+    
+        [[UIApplication sharedApplication] endBackgroundTask: background_task];
+        background_task = UIBackgroundTaskInvalid;
+   }
+    
+    
+    completionHandler(UIBackgroundFetchResultNewData);
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    if (launchOptions) { //launchOptions is not nil
+        NSDictionary *userInfo = [launchOptions valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+        NSDictionary *apsInfo = [userInfo objectForKey:@"aps"];
+        
+        if (apsInfo) {
+            __block UIBackgroundTaskIdentifier bg_task = background_task;
+            background_task = [application beginBackgroundTaskWithExpirationHandler:^ {
+                
+                //Clean up code. Tell the system that we are done.
+                [application endBackgroundTask: bg_task];
+                bg_task = UIBackgroundTaskInvalid;
+            }];
+            
+            UILocalNotification *notification = [[UILocalNotification alloc] init];
+            notification.fireDate = [[NSDate date] dateByAddingTimeInterval:0.5];
+            notification.alertBody = @"1. Got remote push";
+            [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+            
+            
+            [self.locationTracker updateLocationToServer: YES];
+            
+            [[UIApplication sharedApplication] endBackgroundTask: background_task];
+            background_task = UIBackgroundTaskInvalid;
+            
+            [self.locationTracker updateLocationToServer: YES];
+        }
+    }
     
     [self validateModes];
     
@@ -132,8 +205,9 @@
         self.locationTracker = [[LocationTracker alloc]init];
         [self.locationTracker startLocationTracking];
         
-   
-        NSTimeInterval time = LOCATION_TRACKING_SERVICE_CALL_TO_PREVENT_SUSPENSION_FREQUENCY;
+        //Send the best location to server every 60 seconds
+        //You may adjust the time interval depends on the need of your app.
+        NSTimeInterval time = 60.0;
         self.locationUpdateTimer =
         [NSTimer scheduledTimerWithTimeInterval:time
                                          target:self
@@ -141,19 +215,16 @@
                                        userInfo:nil
                                         repeats:YES];
         
-        /*self.simulatePush =  [NSTimer scheduledTimerWithTimeInterval:30
-                                                              target:self
-                                                            selector:@selector(sim)
-                                                            userInfo:nil
-                                                             repeats:YES];*/
     }
 
 }
 
 -(void)updateLocation {
     NSLog(@"updateLocation");
-    [self.locationTracker updateLocationToServer];
+    
+    [self.locationTracker updateLocationToServer: NO];
 }
+
 
 
 -(void)locationDidFailToUpdateWithError:(NSError *)error {
@@ -161,6 +232,7 @@
 }
 - (void)applicationWillResignActive:(UIApplication *)application
 {
+
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
     // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }
@@ -180,7 +252,7 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-    [self.locationTracker updateLocationToServer];
+    [self.locationTracker updateLocationToServer: YES];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

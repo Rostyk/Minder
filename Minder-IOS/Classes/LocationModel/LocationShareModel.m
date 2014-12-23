@@ -11,7 +11,7 @@
 @implementation LocationShareModel
 
 //Class method to make sure the share model is synch across the app
-+ (id)sharedModel
++ (LocationShareModel*)sharedModel
 {
     static id sharedMyModel = nil;
     static dispatch_once_t onceToken;

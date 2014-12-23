@@ -12,7 +12,6 @@
 
 @interface LocationTracker : NSObject <CLLocationManagerDelegate>
 
-@property (nonatomic) BOOL updateLocationOnServer;
 @property (nonatomic) CLLocationCoordinate2D myLastLocation;
 @property (nonatomic) CLLocationAccuracy myLastLocationAccuracy;
 
@@ -25,9 +24,7 @@
 
 - (void)startLocationTracking;
 - (void)stopLocationTracking;
-- (void)updateLocationToServer;
-
--(void) forceUpdateLocation;
+- (void)updateLocationToServer: (BOOL) transfer;
 
 
 @end

@@ -7,7 +7,7 @@
 //
 
 #import "LocationTracker.h"
-#import "Config.h"
+
 #define LATITUDE @"latitude"
 #define LONGITUDE @"longitude"
 #define ACCURACY @"theAccuracy"
@@ -120,7 +120,7 @@
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
     
-   // NSLog(@"locationManager didUpdateLocations");
+    NSLog(@"locationManager didUpdateLocations");
     
     for(int i=0;i<locations.count;i++){
         CLLocation * newLocation = [locations objectAtIndex:i];
@@ -147,6 +147,9 @@
             [dict setObject:[NSNumber numberWithFloat:theLocation.longitude] forKey:@"longitude"];
             [dict setObject:[NSNumber numberWithFloat:theAccuracy] forKey:@"theAccuracy"];
             
+            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithFloat:theLocation.latitude]  forKey: @"latitude"];
+            [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithFloat:theLocation.longitude]  forKey: @"lobgitude"];
+            [[NSUserDefaults standardUserDefaults] synchronize];
             //Add the vallid location with good accuracy into an array
             //Every 1 minute, I will select the best location based on accuracy and send to server
             [self.shareModel.myLocationArray addObject:dict];
@@ -167,21 +170,17 @@
                                                            userInfo:nil
                                                             repeats:NO];
     
-    //Will only stop the locationManager after N seconds, so that we can get some accurate locations
-    //The location manager will only operate for N seconds to save battery
+    //Will only stop the locationManager after 10 seconds, so that we can get some accurate locations
+    //The location manager will only operate for 10 seconds to save battery
     if (self.shareModel.delay10Seconds) {
         [self.shareModel.delay10Seconds invalidate];
         self.shareModel.delay10Seconds = nil;
     }
     
-    self.shareModel.delay10Seconds = [NSTimer scheduledTimerWithTimeInterval: OBTAIN_LOCATION_TIME target:self
+    self.shareModel.delay10Seconds = [NSTimer scheduledTimerWithTimeInterval:10 target:self
                                                     selector:@selector(stopLocationDelayBy10Seconds)
                                                     userInfo:nil
                                                      repeats:NO];
-    if(self.updateLocationOnServer) {
-        [self updateLocationToServer];
-        self.updateLocationOnServer = NO;
-    }
 
 }
 
@@ -222,7 +221,7 @@
 
 
 //Send the location to Server
-- (void)updateLocationToServer {
+- (void)updateLocationToServer: (BOOL) transfer {
     
     NSLog(@"updateLocationToServer");
     
@@ -244,14 +243,12 @@
     
     //If the array is 0, get the last location
     //Sometimes due to network issue or unknown reason, you could not get the location during that  period, the best you can do is sending the last known location to the server
-    BOOL locationAvailable = YES;
     if(self.shareModel.myLocationArray.count==0)
     {
         NSLog(@"Unable to get location, use the last known location");
 
         self.myLocation=self.myLastLocation;
         self.myLocationAccuracy=self.myLastLocationAccuracy;
-        locationAvailable = NO;
         
     }else{
         CLLocationCoordinate2D theBestLocation;
@@ -261,19 +258,29 @@
         self.myLocationAccuracy =[[myBestLocation objectForKey:ACCURACY]floatValue];
     }
     
-    if(locationAvailable) {
-        NSLog(@"Send to Server: Latitude(%f) Longitude(%f) Accuracy(%f)",self.myLocation.latitude, self.myLocation.longitude,self.myLocationAccuracy);
+    NSLog(@"Send to Server: Latitude(%f) Longitude(%f) Accuracy(%f)",self.myLocation.latitude, self.myLocation.longitude,self.myLocationAccuracy);
+    
+    NSString *deviceID = [[NSUserDefaults standardUserDefaults] objectForKey:@"deviceID"];
+    if(transfer) {
         
-        NSString *deviceID = [[NSUserDefaults standardUserDefaults] objectForKey:@"deviceID"];
-        if(self.shareModel.isConnected)
-           [self sendLocation:deviceID location: [[CLLocation alloc] initWithLatitude:self.myLastLocation.latitude longitude:self.myLastLocation.longitude]];
+        UILocalNotification *notification = [[UILocalNotification alloc] init];
+        notification.fireDate = [[NSDate date] dateByAddingTimeInterval:2];
+        notification.alertBody = @"2.Got Location";
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
         
-        //After sending the location to the server successful, remember to clear the current array with the following code. It is to make sure that you clear up old location in the array and add the new locations from locationManager
-        [self.shareModel.myLocationArray removeAllObjects];
-        self.shareModel.myLocationArray = nil;
-        self.shareModel.myLocationArray = [[NSMutableArray alloc]init];
+        UILocalNotification *notification2 = [[UILocalNotification alloc] init];
+        notification2.fireDate = [[NSDate date] dateByAddingTimeInterval:3];
+        notification2.alertBody = @"3. Sending to Server";
+        [[UIApplication sharedApplication] scheduleLocalNotification:notification2];
 
+        
+      [self sendLocation:deviceID location: [[CLLocation alloc] initWithLatitude:self.myLastLocation.latitude longitude:self.myLastLocation.longitude]];
     }
+    
+    //After sending the location to the server successful, remember to clear the current array with the following code. It is to make sure that you clear up old location in the array and add the new locations from locationManager
+    [self.shareModel.myLocationArray removeAllObjects];
+    self.shareModel.myLocationArray = nil;
+    self.shareModel.myLocationArray = [[NSMutableArray alloc]init];
 }
 
 -(void)sendLocation:(NSString*) deviceID location: (CLLocation*) location{
@@ -299,13 +306,11 @@
     
     NSLog(@"response: %@ error: %@",[[NSString alloc] initWithData:respData encoding:NSUTF8StringEncoding],[error localizedDescription]);
     
-    
-}
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.fireDate = [[NSDate date] dateByAddingTimeInterval:4];
+    notification.alertBody = [NSString stringWithFormat:@"4. Got Response: %@", [[NSString alloc] initWithData:respData encoding:NSUTF8StringEncoding]];
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
 
--(void) forceUpdateLocation {
-    [self stopLocationTracking];
-    self.updateLocationOnServer = YES;
-    [self startLocationTracking];
 }
 
 
