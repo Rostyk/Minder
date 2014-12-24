@@ -156,6 +156,10 @@
         }
     }
     
+    [self restart];
+}
+
+-(void) restart {
     //If the timer still valid, return it (Will not run the code below)
     if (self.shareModel.timer) {
         return;
@@ -178,12 +182,11 @@
     }
     
     self.shareModel.delay10Seconds = [NSTimer scheduledTimerWithTimeInterval:10 target:self
-                                                    selector:@selector(stopLocationDelayBy10Seconds)
-                                                    userInfo:nil
-                                                     repeats:NO];
+                                                                    selector:@selector(stopLocationDelayBy10Seconds)
+                                                                    userInfo:nil
+                                                                     repeats:NO];
 
 }
-
 
 //Stop the locationManager
 -(void)stopLocationDelayBy10Seconds{
@@ -196,7 +199,12 @@
 
 - (void)locationManager: (CLLocationManager *)manager didFailWithError: (NSError *)error
 {
-   // NSLog(@"locationManager error:%@",error);
+   
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.fireDate = [[NSDate date] dateByAddingTimeInterval:4];
+    notification.alertBody = [NSString stringWithFormat:@" Location service/task killed with error: %ld", (long)[error code]];
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+    [self restart];
     
     switch([error code])
     {

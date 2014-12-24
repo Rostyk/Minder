@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/LocationService/LocationTracker.m"
-            timestampString = "441062244.6259"
+            timestampString = "441065684.645119"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "287"
-            endingLineNumber = "287"
+            startingLineNumber = "295"
+            endingLineNumber = "295"
             landmarkName = "-sendLocation:location:"
             landmarkType = "5">
          </BreakpointContent>

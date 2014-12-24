@@ -59,6 +59,12 @@
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSLog(@"User ingo: %@",userInfo);
     
+    
+    UILocalNotification *notification2 = [[UILocalNotification alloc] init];
+    notification2.fireDate = [[NSDate date] dateByAddingTimeInterval:0.5];
+    notification2.alertBody = @"[0]. didReceiveRemoteNotification";
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification2];
+    
     __block UIBackgroundTaskIdentifier bg_task = background_task;
     background_task = [application beginBackgroundTaskWithExpirationHandler:^ {
         
@@ -85,6 +91,12 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.fireDate = [[NSDate date] dateByAddingTimeInterval:0.5];
+    notification.alertBody = @"[0]. Before connected";
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+
+    
     
     if([[userDefs objectForKey:@"connected"] boolValue]) {
         __block UIBackgroundTaskIdentifier bg_task = background_task;
@@ -95,12 +107,7 @@
             bg_task = UIBackgroundTaskInvalid;
         }];
     
-        UILocalNotification *notification = [[UILocalNotification alloc] init];
-        notification.fireDate = [[NSDate date] dateByAddingTimeInterval:0.5];
-        notification.alertBody = @"1. Got remote push";
-        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
 
-    
         [self.locationTracker updateLocationToServer: YES];
     
         [[UIApplication sharedApplication] endBackgroundTask: background_task];
@@ -113,7 +120,13 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    if (launchOptions) { //launchOptions is not nil
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.fireDate = [[NSDate date] dateByAddingTimeInterval:0.5];
+    notification.alertBody = @"[0]. didFinishLaunhcing";
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+
+    
+    if (launchOptions) {
         NSDictionary *userInfo = [launchOptions valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
         NSDictionary *apsInfo = [userInfo objectForKey:@"aps"];
         

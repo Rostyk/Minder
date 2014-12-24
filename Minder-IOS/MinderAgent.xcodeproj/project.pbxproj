@@ -764,8 +764,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iOS Development: Bern Hoani (MLX45DT6HE)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iOS Development: Bern Hoani (MLX45DT6HE)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Part Two Consultancy Pty Ltd (ZJJ2T84LYD)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Part Two Consultancy Pty Ltd (ZJJ2T84LYD)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
@@ -789,7 +789,7 @@
 				INFOPLIST_FILE = "MinderAgent/MinderAgent-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "0f2f4725-dbfc-4e56-81ad-f95d06a6f36b";
+				PROVISIONING_PROFILE = "45455729-a37c-4ee7-9c4a-fe2b59149d43";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
@@ -801,8 +801,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iOS Development: Bern Hoani (MLX45DT6HE)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iOS Development: Bern Hoani (MLX45DT6HE)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Part Two Consultancy Pty Ltd (ZJJ2T84LYD)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Part Two Consultancy Pty Ltd (ZJJ2T84LYD)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/HockeySDK-iOS/HockeySDK.embeddedframework",
@@ -826,7 +826,7 @@
 				INFOPLIST_FILE = "MinderAgent/MinderAgent-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "0f2f4725-dbfc-4e56-81ad-f95d06a6f36b";
+				PROVISIONING_PROFILE = "45455729-a37c-4ee7-9c4a-fe2b59149d43";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
