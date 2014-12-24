@@ -127,17 +127,12 @@
         CLLocationCoordinate2D theLocation = newLocation.coordinate;
         CLLocationAccuracy theAccuracy = newLocation.horizontalAccuracy;
         
-        NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
         
-        if (locationAge > 30.0)
-        {
-            continue;
-        }
         
         //Select only valid location and also location with good accuracy
         if(newLocation!=nil&&theAccuracy>0
            &&theAccuracy<2000
-           &&(!(theLocation.latitude==0.0&&theLocation.longitude==0.0))){
+           &&(!((int)theLocation.latitude==0&&(int)theLocation.longitude==0))){
             
             self.myLastLocation = theLocation;
             self.myLastLocationAccuracy= theAccuracy;

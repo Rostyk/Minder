@@ -128,9 +128,9 @@
     
     if (launchOptions) {
         NSDictionary *userInfo = [launchOptions valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-        NSDictionary *apsInfo = [userInfo objectForKey:@"aps"];
+        //NSDictionary *apsInfo = [userInfo objectForKey:@"aps"];
         
-        if (apsInfo) {
+        if (userInfo) {
             __block UIBackgroundTaskIdentifier bg_task = background_task;
             background_task = [application beginBackgroundTaskWithExpirationHandler:^ {
                 
