@@ -176,7 +176,7 @@
         self.shareModel.delay10Seconds = nil;
     }
     
-    self.shareModel.delay10Seconds = [NSTimer scheduledTimerWithTimeInterval:10 target:self
+    self.shareModel.delay10Seconds = [NSTimer scheduledTimerWithTimeInterval:OBTAIN_LOCATION_TIME target:self
                                                                     selector:@selector(stopLocationDelayBy10Seconds)
                                                                     userInfo:nil
                                                                      repeats:NO];
