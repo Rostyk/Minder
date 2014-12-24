@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/LocationService/LocationTracker.m"
-            timestampString = "441065684.645119"
+            timestampString = "441155448.79741"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "295"
-            endingLineNumber = "295"
+            startingLineNumber = "290"
+            endingLineNumber = "290"
             landmarkName = "-sendLocation:location:"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MinderAgent/AppDelegate.m"
-            timestampString = "441153965.499182"
+            timestampString = "441157371.784736"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "124"
-            endingLineNumber = "124"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
             landmarkName = "-application:didFinishLaunchingWithOptions:"
             landmarkType = "5">
          </BreakpointContent>
@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MinderAgent/AppDelegate.m"
-            timestampString = "441153975.44534"
+            timestampString = "441157371.784736"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
             landmarkName = "-application:didReceiveRemoteNotification:"
             landmarkType = "5">
          </BreakpointContent>
@@ -106,12 +106,54 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MinderAgent/AppDelegate.m"
-            timestampString = "441153979.04646"
+            timestampString = "441157371.784736"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "94"
-            endingLineNumber = "94"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
             landmarkName = "-application:didReceiveRemoteNotification:fetchCompletionHandler:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            scope = "0"
+            stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MinderAgent/AppDelegate.m"
+            timestampString = "441157521.475195"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "266"
+            endingLineNumber = "266"
+            landmarkName = "-applicationDidEnterBackground:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MinderAgent/AppDelegate.m"
+            timestampString = "441157695.153861"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "229"
+            endingLineNumber = "229"
+            landmarkName = "-startTask"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -122,12 +164,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Classes/LocationService/LocationTracker.m"
-            timestampString = "441154813.143871"
+            timestampString = "441157726.428252"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "139"
-            endingLineNumber = "139"
-            landmarkName = "-locationManager:didUpdateLocations:"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
+            landmarkName = "-restart"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "MinderAgent/AppDelegate.m"
+            timestampString = "441157811.941849"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "272"
+            endingLineNumber = "272"
+            landmarkName = "-applicationWillEnterForeground:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

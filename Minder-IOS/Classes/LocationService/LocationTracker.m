@@ -7,7 +7,7 @@
 //
 
 #import "LocationTracker.h"
-
+#import "Config.h"
 #define LATITUDE @"latitude"
 #define LONGITUDE @"longitude"
 #define ACCURACY @"theAccuracy"
@@ -150,8 +150,8 @@
             [self.shareModel.myLocationArray addObject:dict];
         }
     }
-    
-    [self restart];
+    if(self.shareModel.isInBackground)
+       [self restart];
 }
 
 -(void) restart {
@@ -164,7 +164,7 @@
     [self.shareModel.bgTask beginNewBackgroundTask];
     
     //Restart the locationMaanger after 1 minute
-    self.shareModel.timer = [NSTimer scheduledTimerWithTimeInterval:60 target:self
+    self.shareModel.timer = [NSTimer scheduledTimerWithTimeInterval:LOCATION_TRACKING_SERVICE_CALL_TO_PREVENT_SUSPENSION_FREQUENCY target:self
                                                            selector:@selector(restartLocationUpdates)
                                                            userInfo:nil
                                                             repeats:NO];

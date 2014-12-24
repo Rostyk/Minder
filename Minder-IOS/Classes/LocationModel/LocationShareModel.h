@@ -16,7 +16,9 @@
 @property (nonatomic) NSTimer * delay10Seconds;
 @property (nonatomic) BackgroundTaskManager * bgTask;
 @property (nonatomic) NSMutableArray *myLocationArray;
-@property (nonatomic) BOOL sendToServer;
+
+@property (nonatomic) BOOL isInBackground;
+
 +(LocationShareModel*)sharedModel;
 
 @end
