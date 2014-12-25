@@ -150,8 +150,8 @@
             [self.shareModel.myLocationArray addObject:dict];
         }
     }
-    if(self.shareModel.isInBackground)
-       [self restart];
+    //if(self.shareModel.isInBackground)
+       //[self restart];
 }
 
 -(void) restart {

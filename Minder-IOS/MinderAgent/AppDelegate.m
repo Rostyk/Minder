@@ -66,61 +66,128 @@
     notification2.alertBody = @"[0]. didReceiveRemoteNotification";
     [[UIApplication sharedApplication] scheduleLocalNotification:notification2];
     
-    [self cleanBgTask];
-    
-    if([[userDefs objectForKey:@"connected"] boolValue]) {
-       __block UIBackgroundTaskIdentifier bg_task = background_task;
-       background_task = [application beginBackgroundTaskWithExpirationHandler:^ {
+    [[FTLocationManager sharedManager] updateLocationWithCompletionHandler:^(CLLocation *location, NSError *error, BOOL locationServicesDisabled) {
         
-           //Clean up code. Tell the system that we are done.
-           [application endBackgroundTask: bg_task];
-           bg_task = UIBackgroundTaskInvalid;
-       }];
-    
-       UILocalNotification *notification = [[UILocalNotification alloc] init];
-       notification.fireDate = [[NSDate date] dateByAddingTimeInterval:1];
-       notification.alertBody = @"Push!!!";
-       [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-    
-       [self.locationTracker updateLocationToServer: YES];
-    
-       [[UIApplication sharedApplication] endBackgroundTask: background_task];
-       background_task = UIBackgroundTaskInvalid;
-    
-       [self.locationTracker updateLocationToServer: YES];
-    }
+        if (error)
+        {
+            //  Handle error here
+            if (locationServicesDisabled) {
+                //  Location services are disabled, you can ask the user to enable them for example
+            }
+        }
+        else
+        {
+            //  Do whatever you want with the current user's location
+            NSString *deviceID = [userDefs objectForKey:@"deviceID"];
+            isConnected = [[userDefs objectForKey:@"connected"] boolValue];
+            if (isConnected) {
+                if (deviceID) {
+                    
+                    UILocalNotification *notification = [[UILocalNotification alloc] init];
+                    notification.fireDate = [[NSDate date] dateByAddingTimeInterval:2.0];
+                    notification.alertBody = @"Sendnig To Server";
+                    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+                    
+                    
+                    [self sendLocation:deviceID location:location];
+                }
+            }
+        }
+        
+     }];
     
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
     
+    [application endBackgroundTask: background_task];
+    background_task = UIBackgroundTaskInvalid;
+    
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     notification.fireDate = [[NSDate date] dateByAddingTimeInterval:0.5];
-    notification.alertBody = @"[0]. Before connected";
+    notification.alertBody = @"[0]. Handling push";
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-
-    [self cleanBgTask];
-    
     
     if([[userDefs objectForKey:@"connected"] boolValue]) {
         __block UIBackgroundTaskIdentifier bg_task = background_task;
         background_task = [application beginBackgroundTaskWithExpirationHandler:^ {
             
             //Clean up code. Tell the system that we are done.
+            
             [application endBackgroundTask: bg_task];
             bg_task = UIBackgroundTaskInvalid;
         }];
     
+        [[FTLocationManager sharedManager] updateLocationWithCompletionHandler:^(CLLocation *location, NSError *error, BOOL locationServicesDisabled) {
+            
+            if (error)
+            {
+                //  Handle error here
+                if (locationServicesDisabled) {
+                    //  Location services are disabled, you can ask the user to enable them for example
+                }
+                [[UIApplication sharedApplication] endBackgroundTask: background_task];
+                background_task = UIBackgroundTaskInvalid;
+                completionHandler(UIBackgroundFetchResultNewData);
 
-        [self.locationTracker updateLocationToServer: YES];
+            }
+            else
+            {
+                //  Do whatever you want with the current user's location
+                NSString *deviceID = [userDefs objectForKey:@"deviceID"];
+                    if (deviceID) {
+                        
+                        UILocalNotification *notification = [[UILocalNotification alloc] init];
+                        notification.fireDate = [[NSDate date] dateByAddingTimeInterval:2.0];
+                        notification.alertBody = @"Sendnig To Server";
+                        [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+                        
+                        
+                        [self sendLocation:deviceID location:location];
+                    }
+                NSLog(@"Lat: %@ Long:%@",[NSNumber numberWithFloat:location.coordinate.latitude],[NSNumber numberWithFloat:location.coordinate.longitude]);
+                //Clean up code. Tell the system that we are done.
+                [[UIApplication sharedApplication] endBackgroundTask: background_task];
+                background_task = UIBackgroundTaskInvalid;
+            }
+            
+             [application endBackgroundTask: bg_task];
+             bg_task = UIBackgroundTaskInvalid;
+             completionHandler(UIBackgroundFetchResultNewData);
+        }
+        ];
+
+        //[self.locationTracker updateLocationToServer: YES];
     
-        [[UIApplication sharedApplication] endBackgroundTask: background_task];
-        background_task = UIBackgroundTaskInvalid;
+        
    }
+}
+
+-(void)sendLocation:(NSString*) deviceID location:(CLLocation *)location{
+    
+    float latitude =  location.coordinate.latitude;
+    float longitude = location.coordinate.longitude;
+    
+    NSString *contentString = [NSString stringWithFormat:@"last_location=%f, %f",latitude, longitude]; //@"aass651378cfa2510b1a6d217fbe795c7cfb307b6cb058b6184aede661092c149"
+    
+    NSString *urlString=[NSString stringWithFormat:@"http://minderweb.com/device/%@",deviceID];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:urlString]];
+    
+    NSData *fileData = [contentString dataUsingEncoding:NSUTF8StringEncoding];
+    [request setHTTPMethod:@"PUT"];
+    [request setHTTPBody:fileData];  // I tried with and
+    
+    NSData *respData;
+    NSURLResponse *response;
+    NSError *error;
+    respData = [NSURLConnection sendSynchronousRequest:request
+                                     returningResponse:&response
+                                                 error:&error];
+    
+    NSLog(@"response: %@ error: %@",[[NSString alloc] initWithData:respData encoding:NSUTF8StringEncoding],[error localizedDescription]);
     
     
-    completionHandler(UIBackgroundFetchResultNewData);
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -133,38 +200,40 @@
     
     if (launchOptions) {
         NSDictionary *userInfo = [launchOptions valueForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-        //NSDictionary *apsInfo = [userInfo objectForKey:@"aps"];
+        
         
         if (userInfo) {
-            [self cleanBgTask];
-            if([[userDefs objectForKey:@"connected"] boolValue]) {
+            [[FTLocationManager sharedManager] updateLocationWithCompletionHandler:^(CLLocation *location, NSError *error, BOOL locationServicesDisabled) {
                 
-                __block UIBackgroundTaskIdentifier bg_task = background_task;
-                background_task = [application beginBackgroundTaskWithExpirationHandler:^ {
-                    
-                    //Clean up code. Tell the system that we are done.
-                    [application endBackgroundTask: bg_task];
-                    bg_task = UIBackgroundTaskInvalid;
-                }];
+                if (error)
+                {
+                    //  Handle error here
+                    if (locationServicesDisabled) {
+                        //  Location services are disabled, you can ask the user to enable them for example
+                    }
+                }
+                else
+                {
+                    //  Do whatever you want with the current user's location
+                    NSString *deviceID = [userDefs objectForKey:@"deviceID"];
+                    isConnected = [[userDefs objectForKey:@"connected"] boolValue];
+                    if (isConnected) {
+                        if (deviceID) {
+                            
+                            UILocalNotification *notification = [[UILocalNotification alloc] init];
+                            notification.fireDate = [[NSDate date] dateByAddingTimeInterval:2.0];
+                            notification.alertBody = @"Sendnig To Server";
+                            [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+                            
+                            
+                            [self sendLocation:deviceID location:location];
+                        }
+                    }
+                }
                 
-                UILocalNotification *notification = [[UILocalNotification alloc] init];
-                notification.fireDate = [[NSDate date] dateByAddingTimeInterval:0.5];
-                notification.alertBody = @"1. Got remote push";
-                [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-                
-                
-                [self.locationTracker updateLocationToServer: YES];
-                
-                [[UIApplication sharedApplication] endBackgroundTask: background_task];
-                background_task = UIBackgroundTaskInvalid;
-                
-                [self.locationTracker updateLocationToServer: YES];
-            }
-            
+            }];
         }
     }
-    
-    [self validateModes];
     
     userDefs = [NSUserDefaults standardUserDefaults];
     
@@ -275,16 +344,16 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    [LocationShareModel sharedModel].isInBackground = YES;
-    [self startTask];
+    //[LocationShareModel sharedModel].isInBackground = YES;
+   // [self startTask];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-    [self.locationUpdateTimer invalidate];
-    [self.locationTracker stopLocationTracking];
+    //[self.locationUpdateTimer invalidate];
+    //[self.locationTracker stopLocationTracking];
     
-    [LocationShareModel sharedModel].isInBackground = NO;
+    //[LocationShareModel sharedModel].isInBackground = NO;
     //[self.locationTracker stopLocationTracking];
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
