@@ -66,6 +66,8 @@
     notification2.alertBody = @"[0]. didReceiveRemoteNotification";
     [[UIApplication sharedApplication] scheduleLocalNotification:notification2];
     
+    [self cleanBgTask];
+    
     if([[userDefs objectForKey:@"connected"] boolValue]) {
        __block UIBackgroundTaskIdentifier bg_task = background_task;
        background_task = [application beginBackgroundTaskWithExpirationHandler:^ {
@@ -98,6 +100,7 @@
     notification.alertBody = @"[0]. Before connected";
     [[UIApplication sharedApplication] scheduleLocalNotification:notification];
 
+    [self cleanBgTask];
     
     
     if([[userDefs objectForKey:@"connected"] boolValue]) {
@@ -133,7 +136,9 @@
         //NSDictionary *apsInfo = [userInfo objectForKey:@"aps"];
         
         if (userInfo) {
+            [self cleanBgTask];
             if([[userDefs objectForKey:@"connected"] boolValue]) {
+                
                 __block UIBackgroundTaskIdentifier bg_task = background_task;
                 background_task = [application beginBackgroundTaskWithExpirationHandler:^ {
                     
@@ -194,6 +199,13 @@
     
     
     return YES;
+}
+
+- (void)cleanBgTask {
+    if(background_task != UIBackgroundTaskInvalid) {
+        [[UIApplication sharedApplication] endBackgroundTask: background_task];
+        background_task = UIBackgroundTaskInvalid;
+    }
 }
 
 -(void) validateModes {
